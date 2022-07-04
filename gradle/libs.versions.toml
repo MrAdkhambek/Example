@@ -2,9 +2,11 @@
 # Plugins
 agp = "7.2.1"
 kotlin-ksp = "1.6.10-1.0.4"
-detekt = "1.21.0-RC2"
 
+junit5 = "5.8.1"
 android-junit5 = "1.8.2.0"
+mannodermaus-junit5 = "1.3.0"
+
 androidX-hilt = "2.41"
 compose = "1.2.0-alpha01"
 
@@ -41,8 +43,6 @@ kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin-ksp" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlinVersion" }
 
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "10.2.1" }
 
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "androidX-hilt" }
 
@@ -102,9 +102,6 @@ room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
-gsm-auth = "com.google.android.gms:play-services-auth:20.1.0"
-gsm-location = "com.google.android.gms:play-services-location:18.0.0"
-
 coil-core = { module = "io.coil-kt:coil", version.ref = "coilVersion" }
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilVersion" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilVersion" }
@@ -142,16 +139,17 @@ javax-inject = "javax.inject:javax.inject:1"
 timber = "com.jakewharton.timber:timber:5.0.1"
 leakcanary = "com.squareup.leakcanary:leakcanary-android:2.8.1"
 
-facebook-sdk = "com.facebook.android:facebook-android-sdk:13.0.0"
+mannodermaus-core = { module = "de.mannodermaus.junit5:android-test-core", version.ref = "mannodermaus-junit5" }
+mannodermaus-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "mannodermaus-junit5" }
 
-sqlcipher = "net.zetetic:android-database-sqlcipher:4.5.1"
-sqlite = "androidx.sqlite:sqlite:2.0.1"
+jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
+jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 
 [bundles]
 kotlin = ["kotlin-stdlib", "kotlin-serialization", "kotlin-coroutines-concurrentFutures", "kotlin-coroutines-core", "kotlin-coroutines-android"]
 accompanist = ["accompanist-pager", "accompanist-insets", "accompanist-flowlayout", "accompanist-permission"]
 coil = ["coil-core", "coil-svg", "coil-gif", "coil-video", "coil-compose"]
-gsm = ["gsm-auth", "gsm-location"]
 
 mvi-orbit = [
     "mvi-core",
@@ -162,11 +160,6 @@ mvi-orbit = [
 dataStore = [
     "dataStore",
     "preferenceStore"
-]
-
-sql = [
-    "sqlcipher",
-    "sqlite"
 ]
 
 room = [

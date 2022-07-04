@@ -3,14 +3,11 @@
     "UnstableApiUsage"
 )
 
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-// import com.android.build.gradle.AppExtension
-// import com.android.build.gradle.LibraryExtension
-// import com.android.build.gradle.AppPlugin
-// import com.android.build.gradle.BaseExtension
-// import com.android.build.gradle.LibraryPlugin
 
 plugins {
     alias(libs.plugins.android.app) apply false
@@ -18,26 +15,15 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.hilt) apply false
-
-    alias(libs.plugins.ktlint) apply true
-    alias(libs.plugins.detekt) apply true
+    alias(libs.plugins.android.junit5) apply false
 }
 
 allprojects {
-
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     repositories {
         gradlePluginPortal()
         mavenCentral()
         google()
-    }
-
-    detekt {
-        config = files("$rootDir/config/detekt/detekt.yml")
-        baseline = file("$rootDir/config/detekt/baseline.xml")
-        buildUponDefaultConfig = true
     }
 
     tasks.withType(KotlinCompile::class).all {
@@ -46,40 +32,60 @@ allprojects {
             freeCompilerArgs = (freeCompilerArgs + Config.freeCompilerArgs).distinct()
         }
     }
-
-    tasks.withType<Detekt>().configureEach {
-        this.jvmTarget = Config.javaVersion.toString()
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-            txt.required.set(true)
-            sarif.required.set(true)
-        }
-    }
-    tasks.withType<DetektCreateBaselineTask>().configureEach {
-        this.jvmTarget = Config.javaVersion.toString()
-    }
 }
 
-// subprojects {
-//
-//    plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
-//        configure<BaseExtension> {
-//
-//            when (this) {
-//                is AppExtension -> {
-//
-//                }
-//            }
-//
-//            dependencies(
-//                closureOf<DependencyHandler> {
-//                    add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:1.1.5")
-//                }
-//            )
-//        }
-//    }
-// }
+subprojects {
+
+    plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
+        configure<BaseExtension> {
+
+            when (this) {
+                is AppExtension -> {
+                    packagingOptions {
+                        resources.excludes.add("META-INF/*.kotlin_module")
+                    }
+                }
+            }
+
+            compileOptions {
+                isCoreLibraryDesugaringEnabled = true
+                sourceCompatibility = Config.javaVersion
+                targetCompatibility = Config.javaVersion
+            }
+
+            defaultConfig {
+                minSdk = Config.minSdkVersion
+                targetSdk = Config.targetSdkVersion
+                versionCode = Config.versionCode
+                versionName = Config.versionName
+                multiDexEnabled = Config.multiDexEnabled
+                testInstrumentationRunner = Config.testInstrumentationRunner
+                testInstrumentationRunnerArguments[Config.runnerBuilder] = Config.testInstrumentationRunnerArguments
+            }
+
+            packagingOptions {
+                resources.excludes.addAll(Config.excludes)
+            }
+
+            dependencies(
+                closureOf<DependencyHandler> {
+
+                    add("androidTestRuntimeOnly", libs.mannodermaus.runner)
+                    add("androidTestImplementation", libs.mannodermaus.core)
+
+                    add("testRuntimeOnly", libs.jupiter.engine)
+                    add("testImplementation", libs.jupiter.api)
+                    add("testImplementation", libs.jupiter.params)
+                    add("coreLibraryDesugaring", libs.coreLibraryDesugaring)
+                }
+            )
+
+            tasks.withType<Test> {
+                useJUnitPlatform()
+            }
+        }
+    }
+}
 
 tasks {
     val clean by registering(Delete::class) {

@@ -10,8 +10,6 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
-
-    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -63,14 +61,6 @@ android {
 kapt {
     correctErrorTypes = true
     generateStubs = true
-}
-
-// ktlint
-ktlint {
-    android.set(true)
-    verbose.set(true)
-    outputColorName.set("RED")
-    disabledRules.addAll("import-ordering")
 }
 
 dependencies {
