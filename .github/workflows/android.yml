@@ -80,6 +80,7 @@ jobs:
       - name: Notify on Slack
         uses: act10ns/slack@v1
         with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
         if: always()
