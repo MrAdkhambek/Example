@@ -58,7 +58,6 @@ subprojects {
                 targetSdk = Config.targetSdkVersion
                 versionCode = Config.versionCode
                 versionName = Config.versionName
-                multiDexEnabled = Config.multiDexEnabled
                 testInstrumentationRunner = Config.testInstrumentationRunner
                 testInstrumentationRunnerArguments[Config.runnerBuilder] = Config.testInstrumentationRunnerArguments
             }
