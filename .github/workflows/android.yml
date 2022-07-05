@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,6 +43,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: apk
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -47,6 +52,7 @@ jobs:
         with:
           tag_name: ${{ github.run_number }}
           release_name: ${{ github.event.repository.name }} v${{ github.run_number }}
+
       - name: Upload Release APK
         id: upload_release_asset
         uses: actions/upload-release-asset@v1.0.1
@@ -57,3 +63,10 @@ jobs:
           asset_path: apk/app-debug.apk
           asset_name: ${{ github.event.repository.name }}.apk
           asset_content_type: application/zip
+
+      - name: Notify on Slack
+        uses: act10ns/slack@v1.0.9
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          if: always()
