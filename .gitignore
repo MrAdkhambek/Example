@@ -17,3 +17,8 @@ local.properties
 /.idea/
 /buildSrc/.gradle/
 /buildSrc/build/
+/.aswb/
+/bazel-bin/
+/bazel-Example/
+/bazel-out/
+/bazel-testlogs/
